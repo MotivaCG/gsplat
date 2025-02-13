@@ -161,15 +161,27 @@ def colormap(img, cmap="jet"):
     W, H = img.shape[:2]
     dpi = 300
     fig, ax = plt.subplots(1, figsize=(H / dpi, W / dpi), dpi=dpi)
+
     im = ax.imshow(img, cmap=cmap)
     ax.set_axis_off()
     fig.colorbar(im, ax=ax)
     fig.tight_layout()
     fig.canvas.draw()
-    data = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
-    data = data.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+
+    # Obtener los datos en formato ARGB
+    data = np.frombuffer(fig.canvas.tostring_argb(), dtype=np.uint8)
+
+    # Obtener dimensiones
+    width, height = fig.canvas.get_width_height()
+    data = data.reshape((height, width, 4))  # ARGB tiene 4 canales
+
+    # Reorganizar canales para obtener RGB (descartar el canal Alpha)
+    data = data[:, :, 1:]  # Tomar solo los canales RGB
+
+    # Convertir a tensor de PyTorch
     img = torch.from_numpy(data).float().permute(2, 0, 1)
-    plt.close()
+
+    plt.close(fig)
     return img
 
 

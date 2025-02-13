@@ -273,7 +273,7 @@ class Runner:
         self.parser = Parser(
             data_dir=cfg.data_dir,
             factor=cfg.data_factor,
-            normalize=True,
+            normalize=False,
             test_every=cfg.test_every,
         )
         self.trainset = Dataset(
@@ -368,7 +368,7 @@ class Runner:
         # Losses & Metrics.
         self.ssim = StructuralSimilarityIndexMeasure(data_range=1.0).to(self.device)
         self.psnr = PeakSignalNoiseRatio(data_range=1.0).to(self.device)
-        self.lpips = LearnedPerceptualImagePatchSimilarity(normalize=True).to(
+        self.lpips = LearnedPerceptualImagePatchSimilarity(normalize=False).to(
             self.device
         )
 
